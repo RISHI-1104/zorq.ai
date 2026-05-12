@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZORQ — Sign In</title>
+<link rel="icon" type="image/x-icon" href="logo.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --yellow: #F5C842;
+    --yellow-dim: #f5c84230;
+    --yellow-glow: #f5c84260;
+    --black: #000000;
+    --surface: #0f0f0f;
+    --surface2: #161616;
+    --border: #2a2a2a;
+    --text-muted: #666;
+    --red: #E63946;
+    --red-dim: #e6394620;
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--black);
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    overflow: hidden;
+  }
+
+  /* Scanline overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(255,255,255,0.015) 2px,
+      rgba(255,255,255,0.015) 4px
+    );
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  /* Noise grain */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: -50%;
+    width: 200%;
+    height: 200%;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 99;
+    opacity: 0.5;
+    animation: grain 0.3s steps(1) infinite;
+  }
+
+  @keyframes grain {
+    0%, 100% { transform: translate(0,0); }
+    10% { transform: translate(-2%,-3%); }
+    20% { transform: translate(4%,2%); }
+    30% { transform: translate(-1%,5%); }
+    40% { transform: translate(3%,-4%); }
+    50% { transform: translate(-5%,1%); }
+    60% { transform: translate(2%,4%); }
+    70% { transform: translate(-3%,-2%); }
+    80% { transform: translate(5%,3%); }
+    90% { transform: translate(-4%,-1%); }
+  }
+
+  .wrapper {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  /* Corner grid decorations */
+  .corner {
+    position: fixed;
+    width: 120px;
+    height: 120px;
+    opacity: 0.2;
+  }
+  .corner--tl { top: 0; left: 0; border-right: 1px solid var(--yellow); border-bottom: 1px solid var(--yellow); }
+  .corner--tr { top: 0; right: 0; border-left: 1px solid var(--yellow); border-bottom: 1px solid var(--yellow); }
+  .corner--bl { bottom: 0; left: 0; border-right: 1px solid var(--yellow); border-top: 1px solid var(--yellow); }
+  .corner--br { bottom: 0; right: 0; border-left: 1px solid var(--yellow); border-top: 1px solid var(--yellow); }
+
+  /* Step indicator left */
+  .step-indicator {
+    position: fixed;
+    left: 32px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+  }
+  .step-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+  .step-dot.active {
+    background: var(--yellow);
+    box-shadow: 0 0 10px var(--yellow-glow);
+  }
+  .step-dot.done {
+    background: var(--yellow);
+    opacity: 0.4;
+  }
+  .step-line {
+    width: 1px;
+    height: 20px;
+    background: var(--border);
+  }
+  .step-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    color: var(--text-muted);
+    writing-mode: vertical-rl;
+    margin-top: 16px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* Main card */
+  .card {
+    width: 440px;
+    border: 1px solid var(--yellow);
+    background: var(--surface);
+    position: relative;
+    animation: fadeUp 0.6s ease both;
+    box-shadow:
+      0 0 0 1px var(--yellow-dim),
+      0 0 40px var(--yellow-dim),
+      0 0 80px rgba(245,200,66,0.05),
+      inset 0 0 60px rgba(245,200,66,0.03);
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Corner accents on card */
+  .card::before, .card::after {
+    content: '';
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-color: var(--yellow);
+    border-style: solid;
+  }
+  .card::before { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
+  .card::after  { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
+
+  /* Header */
+  .card-header {
+    padding: 28px 36px 20px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+
+  .zorq-logo {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: pulse-glow 3s ease-in-out infinite;
+  }
+
+  .zorq-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 0 20px var(--yellow-glow));
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { filter: drop-shadow(0 0 20px var(--yellow-glow)) drop-shadow(0 0 60px rgba(245,200,66,0.3)); }
+    50%       { filter: drop-shadow(0 0 30px var(--yellow-glow)) drop-shadow(0 0 80px rgba(245,200,66,0.5)) drop-shadow(0 0 120px rgba(245,200,66,0.15)); }
+  }
+
+  .logo-sub {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 4px;
+    margin-top: 4px;
+    text-transform: uppercase;
+  }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+  }
+  .tab {
+    flex: 1;
+    padding: 14px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .tab.active {
+    color: var(--yellow);
+    background: rgba(245,200,66,0.04);
+  }
+  .tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0; right: 0;
+    height: 2px;
+    background: var(--yellow);
+    box-shadow: 0 0 8px var(--yellow-glow);
+  }
+  .tab:hover:not(.active) { color: #999; background: rgba(255,255,255,0.02); }
+
+  /* Form body */
+  .card-body {
+    padding: 28px 36px 24px;
+  }
+
+  .form-group {
+    margin-bottom: 16px;
+    animation: fadeUp 0.6s ease both;
+  }
+  .form-group:nth-child(1) { animation-delay: 0.1s; }
+  .form-group:nth-child(2) { animation-delay: 0.18s; }
+  .form-group:nth-child(3) { animation-delay: 0.26s; }
+
+  .form-label {
+    display: block;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .input-wrap {
+    position: relative;
+  }
+  .input-wrap .icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 15px;
+    pointer-events: none;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="password"] {
+    width: 100%;
+    padding: 13px 14px 13px 40px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    letter-spacing: 0.3px;
+  }
+
+  input::placeholder { color: #333; }
+
+  input:focus {
+    border-color: var(--yellow);
+    box-shadow: 0 0 0 1px var(--yellow-dim), inset 0 0 20px rgba(245,200,66,0.03);
+  }
+
+  /* Eye toggle for password */
+  .eye-btn {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    padding: 0;
+    font-size: 15px;
+    transition: color 0.2s;
+  }
+  .eye-btn:hover { color: var(--yellow); }
+
+  /* Buttons */
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 24px;
+    animation: fadeUp 0.6s 0.35s ease both;
+  }
+
+  .btn {
+    flex: 1;
+    padding: 14px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.08);
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .btn:hover::after { opacity: 1; }
+  .btn:active { transform: scale(0.98); }
+
+  .btn-primary {
+    background: var(--yellow);
+    color: var(--black);
+    font-weight: 700;
+    box-shadow: 0 0 20px var(--yellow-dim);
+  }
+  .btn-primary:hover {
+    box-shadow: 0 0 30px var(--yellow-glow);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--red);
+    border: 1px solid var(--red);
+    background: var(--red-dim);
+  }
+  .btn-secondary:hover {
+    background: rgba(230,57,70,0.15);
+    border-color: #ff4d5a;
+    box-shadow: 0 0 15px rgba(230,57,70,0.2);
+  }
+
+  /* Footer */
+  .card-footer {
+    padding: 14px 36px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .status-dot {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+  }
+  .status-dot::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 6px #22c55e80;
+    animation: blink 2s ease-in-out infinite;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .version {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    color: #333;
+    letter-spacing: 1px;
+  }
+
+  /* Toggle signup/login panel */
+  .signup-extra { display: none; }
+  .signup-extra.visible { display: block; }
+
+  /* Animated grid bg */
+  .bg-grid {
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(245,200,66,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(245,200,66,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+  }
+
+  /* Floating orbs */
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    animation: drift 12s ease-in-out infinite;
+  }
+  .orb1 { width: 300px; height: 300px; background: rgba(245,200,66,0.06); top: -100px; right: -100px; animation-delay: 0s; }
+  .orb2 { width: 200px; height: 200px; background: rgba(245,200,66,0.04); bottom: -80px; left: -60px; animation-delay: -6s; }
+
+  @keyframes drift {
+    0%,100% { transform: translate(0,0) scale(1); }
+    33% { transform: translate(20px,-15px) scale(1.05); }
+    66% { transform: translate(-10px,20px) scale(0.95); }
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     RESPONSIVE DESIGN - MOBILE FIRST APPROACH
+     ═══════════════════════════════════════════════════════════ */
+
+  /* MOBILE: max-width 480px */
+  @media (max-width: 480px) {
+    .card {
+      width: 90vw;
+      max-width: 380px;
+      margin: 20px;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .zorq-logo {
+      width: 60px;
+      height: 60px;
+    }
+
+    .logo-sub {
+      font-size: 9px;
+    }
+
+    .tab {
+      padding: 12px;
+      font-size: 10px;
+      letter-spacing: 1px;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-label {
+      font-size: 8px;
+      margin-bottom: 6px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      padding: 11px 12px 11px 36px;
+      font-size: 13px;
+      border-radius: 8px;
+    }
+
+    .input-wrap .icon {
+      left: 12px;
+      font-size: 14px;
+    }
+
+    .eye-btn {
+      right: 12px;
+      font-size: 14px;
+    }
+
+    .btn-row {
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .btn {
+      padding: 12px;
+      font-size: 10px;
+      letter-spacing: 1px;
+      border-radius: 8px;
+    }
+
+    .card-footer {
+      padding: 10px 18px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .step-indicator {
+      display: none;
+    }
+
+    .corner {
+      display: none;
+    }
+
+    .orb {
+      display: none;
+    }
+  }
+
+  /* TABLET: 481px - 1024px */
+  @media (max-width: 1024px) and (min-width: 481px) {
+    .card {
+      width: 80vw;
+      max-width: 420px;
+    }
+
+    .step-indicator {
+      left: 20px;
+    }
+
+    .step-dot {
+      width: 7px;
+      height: 7px;
+    }
+
+    .step-line {
+      height: 18px;
+    }
+  }
+
+  /* LANDSCAPE MODE */
+  @media (max-height: 600px) {
+    .wrapper {
+      height: auto;
+      min-height: 100vh;
+    }
+
+    .card {
+      margin: 10px auto;
+    }
+
+    .form-group {
+      margin-bottom: 10px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      padding: 10px 12px 10px 36px;
+    }
+
+    .btn-row {
+      margin-top: 14px;
+    }
+
+    .step-indicator {
+      display: none;
+    }
+  }
+
+  /* SMALL PHONES: max-width 375px */
+  @media (max-width: 375px) {
+    .card {
+      width: 95vw;
+      margin: 15px;
+    }
+
+    .zorq-logo {
+      width: 50px;
+      height: 50px;
+    }
+
+    .card-header {
+      padding: 18px 20px 14px;
+    }
+
+    .card-body {
+      padding: 18px 20px 18px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      font-size: 12px;
+    }
+  }
+
+</style>
+
+<script>
+  // Simple hash function
+  function simpleHash(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = ((hash << 5) - hash) + str.charCodeAt(i);
+      hash = hash & hash;
+    }
+    return Math.abs(hash).toString(16);
+  }
+
+  // Validation
+  function validateEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  function validatePassword(password) {
+    return password && password.length >= 6;
+  }
+
+  function validateName(name) {
+    return name && name.trim().length >= 2;
+  }
+
+  // Tab switching
+  function switchTab(tab) {
+    const loginForm = document.getElementById('form-login');
+    const signupForm = document.getElementById('form-signup');
+    const tabLogin = document.getElementById('tab-login');
+    const tabSignup = document.getElementById('tab-signup');
+    
+    if (tab === 'login') {
+      loginForm.style.display = 'block';
+      signupForm.style.display = 'none';
+      tabLogin.classList.add('active');
+      tabSignup.classList.remove('active');
+    } else {
+      loginForm.style.display = 'none';
+      signupForm.style.display = 'block';
+      tabLogin.classList.remove('active');
+      tabSignup.classList.add('active');
+    }
+    
+    // Clear forms
+    loginForm.querySelectorAll('input').forEach(inp => inp.value = '');
+    signupForm.querySelectorAll('input').forEach(inp => inp.value = '');
+  }
+
+  // Password toggle
+  function togglePw(id, btn) {
+    const input = document.getElementById(id);
+    if (input.type === 'password') {
+      input.type = 'text';
+      btn.style.color = 'var(--yellow)';
+    } else {
+      input.type = 'password';
+      btn.style.color = '';
+    }
+  }
+
+  // Handle continue/create button
+  function handleContinue() {
+    const btn = event.target.closest('button');
+    const isSignup = btn.textContent.includes('Create');
+    
+    // Find which form we're in
+    const loginForm = document.getElementById('form-login');
+    const signupForm = document.getElementById('form-signup');
+    const form = isSignup ? signupForm : loginForm;
+    
+    const emailInput = form.querySelector('input[type="email"]');
+    const passwordInput = form.querySelector('input[type="password"]');
+    const nameInput = form.querySelector('input[placeholder*="full name"]');
+    
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
+    const name = (nameInput?.value || 'User').trim();
+
+    // Validation
+    if (!email) {
+      alert('❌ Email cannot be empty');
+      return;
+    }
+    if (!validateEmail(email)) {
+      alert('❌ Invalid email format');
+      return;
+    }
+    if (!password) {
+      alert('❌ Password cannot be empty');
+      return;
+    }
+    if (!validatePassword(password)) {
+      alert('❌ Password must be at least 6 characters');
+      return;
+    }
+
+    const users = JSON.parse(localStorage.getItem('zorq_users') || '{}');
+    const userExists = users[email];
+
+    if (isSignup) {
+      if (!validateName(name)) {
+        alert('❌ Name must be at least 2 characters');
+        return;
+      }
+      if (userExists) {
+        alert('❌ Email already registered! Use Sign In');
+        return;
+      }
+
+      // Register new user
+      users[email] = {
+        name: name,
+        password: simpleHash(password),
+        createdAt: new Date().toLocaleString()
+      };
+      localStorage.setItem('zorq_users', JSON.stringify(users));
+      
+      // Send welcome email
+      fetch('http://localhost:5000/api/send-welcome-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: name,
+          email: email,
+          userId: email
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          console.log('✓ Welcome email sent to ' + email);
+        } else {
+          console.log('Email sending skipped or failed (service may not be configured)');
+        }
+      })
+      .catch(err => console.log('Email service unavailable - account created successfully'));
+      
+      alert('✅ Account created! Now signing you in...');
+    } else {
+      if (!userExists) {
+        alert('❌ Email not found! Create a new account');
+        return;
+      }
+      if (simpleHash(password) !== userExists.password) {
+        alert('❌ Incorrect password!');
+        passwordInput.value = '';
+        return;
+      }
+      alert('✅ Correct password!');
+    }
+
+    // Authenticate
+    btn.textContent = 'Verifying...';
+    btn.disabled = true;
+    
+    setTimeout(() => {
+      localStorage.setItem('zorq_user', JSON.stringify({
+        name: userExists ? userExists.name : name,
+        email: email,
+        loggedInAt: new Date().toLocaleString()
+      }));
+      
+      btn.textContent = '✓ Verified';
+      btn.style.background = '#22c55e';
+      
+      setTimeout(() => {
+        window.location.href = 'dashboard.html';
+      }, 500);
+    }, 800);
+  }
+</script>
+
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="corner corner--tl"></div>
+<div class="corner corner--tr"></div>
+<div class="corner corner--bl"></div>
+<div class="corner corner--br"></div>
+
+<!-- Step indicator -->
+<div class="step-indicator">
+  <div class="step-dot done" title="Loading"></div>
+  <div class="step-line"></div>
+  <div class="step-dot done" title="Landing"></div>
+  <div class="step-line"></div>
+  <div class="step-dot active" title="Auth"></div>
+  <div class="step-line"></div>
+  <div class="step-dot" title="Dashboard"></div>
+  <span class="step-label">Auth</span>
+</div>
+
+<div class="wrapper">
+  <div class="card">
+
+    <!-- Header -->
+    <div class="card-header">
+      <div class="zorq-logo"><img src="logo.png" alt="ZORQ" style="width:100%; height:100%; object-fit:contain;"></div>
+      <div class="logo-sub">AI Intelligence System</div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" id="tab-login" onclick="switchTab('login')">Sign In</button>
+      <button class="tab" id="tab-signup" onclick="switchTab('signup')">New User</button>
+    </div>
+
+    <!-- Form -->
+    <div class="card-body">
+      <div id="form-login">
+        <div class="form-group">
+          <label class="form-label">Mail ID</label>
+          <div class="input-wrap">
+            <span class="icon">✉</span>
+            <input type="email" placeholder="your@email.com" autocomplete="email">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <div class="input-wrap">
+            <span class="icon">⬡</span>
+            <input type="password" id="pw1" placeholder="••••••••">
+            <button class="eye-btn" onclick="togglePw('pw1',this)" title="Show password">👁</button>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="handleContinue()">Continue →</button>
+        </div>
+      </div>
+
+      <div id="form-signup" style="display:none">
+        <div class="form-group">
+          <label class="form-label">Name</label>
+          <div class="input-wrap">
+            <span class="icon">◎</span>
+            <input type="text" placeholder="Your full name">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Mail ID</label>
+          <div class="input-wrap">
+            <span class="icon">✉</span>
+            <input type="email" placeholder="your@email.com">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <div class="input-wrap">
+            <span class="icon">⬡</span>
+            <input type="password" id="pw2" placeholder="••••••••">
+            <button class="eye-btn" onclick="togglePw('pw2',this)" title="Show password">👁</button>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="switchTab('login')">← Back</button>
+          <button class="btn btn-primary" onclick="handleContinue()">Create →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="card-footer">
+      <span class="status-dot">SYSTEM ONLINE</span>
+      <span class="version">v0.1.0</span>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // Simple hash function for password (not cryptographically secure, for demo only)
+  function simpleHash(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      const char = str.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32bit integer
+    }
+    return Math.abs(hash).toString(16);
+  }
+
+  // Validation functions
+  function validateEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  }
+
+  function validatePassword(password) {
+    return password.length >= 6;
+  }
+
+  function validateName(name) {
+    return name.trim().length >= 2;
+  }
+
+  function showError(message) {
+    alert('❌ Error: ' + message);
+  }
+
+  function switchTab(tab) {
+    const loginForm = document.getElementById('form-login');
+    const signupForm = document.getElementById('form-signup');
+    const tabLogin = document.getElementById('tab-login');
+    const tabSignup = document.getElementById('tab-signup');
+    
+    // Clear forms and errors
+    loginForm.querySelectorAll('input').forEach(inp => inp.value = '');
+    signupForm.querySelectorAll('input').forEach(inp => inp.value = '');
+
+    if (tab === 'login') {
+      loginForm.style.display = 'block';
+      signupForm.style.display = 'none';
+      tabLogin.classList.add('active');
+      tabSignup.classList.remove('active');
+    } else {
+      loginForm.style.display = 'none';
+      signupForm.style.display = 'block';
+      tabLogin.classList.remove('active');
+      tabSignup.classList.add('active');
+    }
+  }
+
+  function togglePw(id, btn) {
+    const input = document.getElementById(id);
+    if (input.type === 'password') {
+      input.type = 'text';
+      btn.style.color = 'var(--yellow)';
+    } else {
+      input.type = 'password';
+      btn.style.color = '';
+    }
+  }
+
+  function handleContinue() {
+    const btn = event.currentTarget;
+    const isSignup = btn.textContent.includes('Create');
+    const form = btn.closest('#form-login') || btn.closest('#form-signup');
+    
+    // Get all inputs
+    const inputs = form.querySelectorAll('input');
+    const emailInput = form.querySelector('input[type="email"]');
+    const passwordInput = form.querySelector('input[type="password"]');
+    const nameInput = form.querySelector('input[placeholder*="full name"]');
+    
+    const email = emailInput?.value.trim() || '';
+    const password = passwordInput?.value || '';
+    const name = nameInput?.value.trim() || '';
+
+    // Validation
+    if (!email) {
+      showError('Email cannot be empty');
+      emailInput?.focus();
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      showError('Please enter a valid email address');
+      emailInput?.focus();
+      return;
+    }
+
+    if (!password) {
+      showError('Password cannot be empty');
+      passwordInput?.focus();
+      return;
+    }
+
+    if (!validatePassword(password)) {
+      showError('Password must be at least 6 characters long');
+      passwordInput?.focus();
+      return;
+    }
+
+    const users = JSON.parse(localStorage.getItem('zorq_users') || '{}');
+    const userExists = users[email];
+
+    // SIGNUP: New user registration
+    if (isSignup) {
+      if (!name) {
+        showError('Name cannot be empty');
+        nameInput?.focus();
+        return;
+      }
+
+      if (!validateName(name)) {
+        showError('Name must be at least 2 characters long');
+        nameInput?.focus();
+        return;
+      }
+
+      if (userExists) {
+        showError('Email already registered! Use Sign In instead.');
+        emailInput?.focus();
+        return;
+      }
+
+      // Store new user
+      const hashedPassword = simpleHash(password);
+      users[email] = {
+        name: name,
+        email: email,
+        password: hashedPassword,
+        createdAt: new Date().toISOString()
+      };
+      localStorage.setItem('zorq_users', JSON.stringify(users));
+      
+      // Authenticate
+      authenticateUser(email, name);
+    }
+    // SIGNIN: Existing user login
+    else {
+      if (!userExists) {
+        showError('Email not found! Use New User to create an account.');
+        emailInput?.focus();
+        return;
+      }
+
+      // Verify password
+      const hashedInputPassword = simpleHash(password);
+      if (hashedInputPassword !== userExists.password) {
+        showError('Incorrect password!');
+        passwordInput?.value = '';
+        passwordInput?.focus();
+        return;
+      }
+
+      // Authenticate
+      authenticateUser(email, userExists.name);
+    }
+  }
+
+</body>
+</html>

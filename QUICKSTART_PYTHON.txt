@@ -1,0 +1,125 @@
+ZORQ AI Chatbot - Quick Start Guide (Python Edition)
+=====================================================
+
+🎯 TO RUN ZORQ:
+
+Step 1: Install Python (if not already installed)
+--------------------------------------------------
+1. Download Python from: https://www.python.org/downloads/
+2. Run the installer
+3. ⚠️ IMPORTANT: CHECK "Add Python to PATH"
+4. Click "Install Now"
+5. Restart your computer
+
+
+Step 2: Setup ZORQ (Easiest - Windows)
+--------------------------------------
+1. Open File Explorer
+2. Navigate to: c:\Users\rishi\Desktop\Works\zorq
+3. Double-click: setup.bat
+4. Wait for "Server running on http://localhost:5000"
+5. Browser opens automatically
+
+
+Step 3: Manual Setup (All Systems)
+----------------------------------
+1. Open PowerShell/Terminal in the zorq folder
+2. Run: python -m pip install -r requirements.txt
+3. Run: python server.py
+4. Open browser: http://localhost:5000
+
+
+✅ Once Running:
+----------------------------------
+✓ Loading page shows → auto goes to Auth page
+✓ Enter any email/password (demo mode)
+✓ Click "Continue →"
+✓ Auto redirects through Loading → Dashboard
+✓ Chat with ZORQ!
+
+✓ Type a message in the input box
+✓ Press Enter or click Send button
+✓ ZORQ responds instantly with Groq AI
+
+
+❓ Troubleshooting:
+----------------------------------
+
+Q: "python command not found"
+A: Python is not installed or not in PATH
+   - Download from https://www.python.org/
+   - Install with "Add Python to PATH" checked
+   - Restart your computer
+
+Q: "ModuleNotFoundError: No module named 'flask'"
+A: Dependencies not installed
+   Run: python -m pip install -r requirements.txt
+
+Q: "Connection refused" or "Connection error"
+A: Server is not running
+   - Make sure server.py is running in terminal
+   - Keep terminal open while using the app
+   - Check for error messages in terminal
+
+Q: "Port 5000 already in use"
+A: Another app is using port 5000
+   - Close other Python processes
+   - Or edit server.py and change port 5000 to 5001
+
+
+📂 File Structure:
+----------------------------------
+loading.html    → Boot animation screen
+auth.html       → Login/signup page
+dashboard.html  → Main chat interface
+server.py       → Python backend (handles AI)
+requirements.txt → Python dependencies
+
+
+🚀 How It Works:
+----------------------------------
+1. You open loading.html
+2. Auto redirects to auth.html after animation
+3. You login (any credentials work for demo)
+4. Auto goes to loading.html again
+5. Then auto opens dashboard.html
+6. You chat → message sent to server.py
+7. server.py calls Groq AI API
+8. Response comes back → displayed in chat
+
+
+🔐 Security:
+----------------------------------
+✓ API key is hidden in server.py (not in browser)
+✓ All AI calls go through backend server
+✓ No sensitive data in frontend
+✓ Safe for public deployment
+
+
+💾 Chat History:
+----------------------------------
+✓ Messages saved in browser (localStorage)
+✓ Click "Save Chat" button to download as JSON
+✓ Each chat creates a new file
+
+
+📱 Desktop vs Mobile:
+----------------------------------
+✓ Works on all devices
+✓ Responsive design
+✓ Touch-friendly buttons
+✓ Works on phones and tablets
+
+
+🌐 Deploy to Internet:
+----------------------------------
+1. Push to GitHub
+2. Deploy on:
+   - Render (free Python hosting)
+   - Railway (paid but affordable)
+   - Heroku (paid)
+   - PythonAnywhere (Python-specific)
+3. They'll auto-detect and run Python
+
+
+Questions? Open terminal and check error messages!

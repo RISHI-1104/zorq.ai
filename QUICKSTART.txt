@@ -1,0 +1,84 @@
+ZORQ AI Chatbot - Quick Start Guide
+====================================
+
+🎯 TO RUN ZORQ:
+
+Option 1: Windows Users (Easiest)
+----------------------------------
+1. Double-click: setup.bat
+   (This will install dependencies and start the server)
+
+2. Wait for "Server running on http://localhost:3000"
+
+3. Browser will auto-open, or go to: http://localhost:3000
+
+
+Option 2: Manual Setup (All Systems)
+-------------------------------------
+1. Open terminal/command prompt in this folder
+
+2. Run: npm install
+   (Wait for dependencies to install)
+
+3. Run: npm start
+   (Server starts on port 3000)
+
+4. Open browser: http://localhost:3000
+
+
+✅ Once Running:
+----------------------------------
+✓ Click "Loading Screen" → automatically goes to Auth
+✓ Fill any email/password (demo mode - any values work)
+✓ Click "Continue →" or "Create →"
+✓ Redirects to Loading → then Dashboard
+✓ Start chatting with ZORQ!
+
+✓ Type a message in the chat box
+✓ Press Enter or click Send button
+✓ ZORQ responds using Groq AI API
+
+
+❓ Troubleshooting:
+----------------------------------
+
+Q: "Port 3000 already in use"
+A: Close the terminal and try again, or use: PORT=3001 npm start
+
+Q: "npm command not found"
+A: Install Node.js from: https://nodejs.org/
+
+Q: "Connection error" in chat
+A: Make sure server.js is running. Check terminal for errors.
+
+Q: "Module not found"
+A: Run: npm install
+   Then: npm start
+
+
+📱 Features:
+----------------------------------
+✓ Real-time Groq AI responses
+✓ Beautiful cyberpunk interface
+✓ User authentication
+✓ Chat history
+✓ Save conversations to JSON
+✓ Responsive design
+
+
+🌐 Deploy to Internet:
+----------------------------------
+1. Push this folder to GitHub
+2. Connect to Vercel, Heroku, or Railway
+3. They'll auto-detect it's a Node.js app
+4. Server will run online!
+
+
+📧 API Key:
+----------------------------------
+Your Groq API key is stored securely in server.js
+It's NOT exposed to the browser (frontend)
+This is the proper security practice!
+
+
+Questions? Check README.md for more details

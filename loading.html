@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZORQ AI – Loading</title>
+<link rel="icon" type="image/x-icon" href="logo.ico">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --yellow: #f5c500;
+    --yellow-dim: #b08e00;
+    --glass: rgba(245,197,0,0.07);
+    --glow: 0 0 24px #f5c50088, 0 0 60px #f5c50033;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--black);
+    color: var(--yellow);
+    font-family: 'Share Tech Mono', monospace;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(245,197,0,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(245,197,0,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Radial glow center */
+  body::after {
+    content: '';
+    position: fixed;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(245,197,0,0.12) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 0;
+    animation: pulse 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    50% { transform: translate(-50%, -50%) scale(1.15); opacity: 0.6; }
+  }
+
+  .container {
+    position: relative; z-index: 1;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 32px;
+    text-align: center;
+  }
+
+  /* Logo */
+  .logo {
+    width: 100px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: logoIn 1s cubic-bezier(0.16,1,0.3,1) both;
+    position: relative;
+  }
+
+  .logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(var(--glow));
+  }
+
+  .logo::after {
+    content: '';
+    display: none;
+  }
+
+  @keyframes logoIn {
+    0% { opacity: 0; transform: translateY(-40px) scale(0.8); filter: blur(20px); }
+    100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+  }
+
+  .tagline {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: clamp(11px, 2.5vw, 14px);
+    letter-spacing: 6px;
+    color: var(--yellow-dim);
+    text-transform: uppercase;
+    animation: fadeIn 1s 0.6s both;
+  }
+
+  /* Hex icon */
+  .hex-wrap {
+    animation: fadeIn 0.8s 0.4s both, float 4s 1.5s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .hex-icon {
+    width: 90px; height: 90px;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .hex-icon svg {
+    position: absolute; inset: 0;
+    animation: spin 8s linear infinite;
+  }
+
+  .hex-inner {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+  }
+
+  .hex-inner img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(var(--glow));
+  }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  /* Progress bar */
+  .progress-wrap {
+    width: clamp(240px, 60vw, 360px);
+    animation: fadeIn 0.8s 1s both;
+  }
+
+  .progress-label {
+    display: flex; justify-content: space-between;
+    font-size: 11px; letter-spacing: 2px;
+    color: var(--yellow-dim);
+    margin-bottom: 8px;
+  }
+
+  .progress-bar {
+    height: 3px;
+    background: rgba(245,197,0,0.12);
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--yellow-dim), var(--yellow));
+    border-radius: 2px;
+    box-shadow: 0 0 12px var(--yellow);
+    width: 0%;
+    animation: load 2.8s 1.2s cubic-bezier(0.4,0,0.2,1) forwards;
+  }
+
+  @keyframes load {
+    0% { width: 0%; }
+    30% { width: 40%; }
+    60% { width: 65%; }
+    80% { width: 85%; }
+    100% { width: 100%; }
+  }
+
+  /* Status text */
+  .status {
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--yellow-dim);
+    animation: fadeIn 0.8s 1.2s both;
+    min-height: 18px;
+  }
+
+  /* Scanline overlay */
+  .scanlines {
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.15) 2px,
+      rgba(0,0,0,0.15) 4px
+    );
+    pointer-events: none; z-index: 10;
+    opacity: 0.4;
+  }
+
+  /* Corner decorations */
+  .corner {
+    position: fixed;
+    width: 48px; height: 48px;
+    border-color: rgba(245,197,0,0.35);
+    border-style: solid;
+    animation: fadeIn 1.2s 0.5s both;
+  }
+  .corner-tl { top: 24px; left: 24px; border-width: 2px 0 0 2px; }
+  .corner-tr { top: 24px; right: 24px; border-width: 2px 2px 0 0; }
+  .corner-bl { bottom: 24px; left: 24px; border-width: 0 0 2px 2px; }
+  .corner-br { bottom: 24px; right: 24px; border-width: 0 2px 2px 0; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Dots */
+  .dots {
+    display: flex; gap: 8px;
+    animation: fadeIn 0.8s 1s both;
+  }
+  .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--yellow);
+    animation: blink 1.2s infinite;
+  }
+  .dot:nth-child(2) { animation-delay: 0.2s; }
+  .dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes blink {
+    0%, 100% { opacity: 0.2; transform: scale(0.7); }
+    50% { opacity: 1; transform: scale(1); box-shadow: 0 0 8px var(--yellow); }
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     RESPONSIVE DESIGN - MOBILE FIRST APPROACH
+     ═══════════════════════════════════════════════════════════ */
+
+  /* MOBILE: max-width 480px */
+  @media (max-width: 480px) {
+    .logo {
+      width: 70px;
+      height: 70px;
+    }
+
+    .tagline {
+      font-size: clamp(10px, 2vw, 12px);
+      letter-spacing: 4px;
+    }
+
+    .hex-icon {
+      width: 70px;
+      height: 70px;
+    }
+
+    .hex-inner {
+      width: 35px;
+      height: 35px;
+    }
+
+    .progress-wrap {
+      width: clamp(200px, 80vw, 300px);
+    }
+
+    .progress-label {
+      font-size: 10px;
+      gap: 8px;
+    }
+
+    .progress-bar {
+      height: 2px;
+    }
+
+    .status {
+      font-size: 10px;
+      letter-spacing: 2px;
+    }
+
+    .dots {
+      gap: 6px;
+    }
+
+    .dot {
+      width: 5px;
+      height: 5px;
+    }
+
+    .corner {
+      width: 36px;
+      height: 36px;
+    }
+
+    .corner-tl { top: 16px; left: 16px; }
+    .corner-tr { top: 16px; right: 16px; }
+    .corner-bl { bottom: 16px; left: 16px; }
+    .corner-br { bottom: 16px; right: 16px; }
+  }
+
+  /* TABLET: 481px - 1024px */
+  @media (max-width: 1024px) and (min-width: 481px) {
+    .container {
+      gap: 24px;
+    }
+
+    .progress-wrap {
+      width: clamp(280px, 70vw, 360px);
+    }
+  }
+
+  /* LANDSCAPE MODE */
+  @media (max-height: 600px) {
+    .container {
+      gap: 12px;
+    }
+
+    .hex-wrap {
+      display: none;
+    }
+
+    .logo {
+      width: 60px;
+      height: 60px;
+      margin-bottom: 0;
+    }
+
+    .progress-wrap {
+      width: 240px;
+    }
+
+    .status {
+      min-height: 14px;
+    }
+
+    .corner {
+      display: none;
+    }
+  }
+
+  /* VERY SMALL PHONES: max-width 320px */
+  @media (max-width: 320px) {
+    .logo {
+      width: 60px;
+      height: 60px;
+    }
+
+    .hex-icon {
+      width: 60px;
+      height: 60px;
+    }
+
+    .hex-inner {
+      width: 30px;
+      height: 30px;
+    }
+
+    .progress-wrap {
+      width: 90vw;
+    }
+
+    .container {
+      gap: 16px;
+    }
+  }
+
+</style>
+</head>
+<body>
+
+<div class="scanlines"></div>
+<div class="corner corner-tl"></div>
+<div class="corner corner-tr"></div>
+<div class="corner corner-bl"></div>
+<div class="corner corner-br"></div>
+
+<div class="container">
+  <div class="hex-wrap">
+    <div class="hex-icon">
+      <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="45,4 82,24 82,66 45,86 8,66 8,24"
+          stroke="#f5c500" stroke-width="1.5" fill="none" opacity="0.6"/>
+        <polygon points="45,14 72,29 72,61 45,76 18,61 18,29"
+          stroke="#f5c500" stroke-width="1" fill="none" opacity="0.3"/>
+      </svg>
+      <span class="hex-inner"><img src="logo.png" alt="Z" style="width:100%; height:100%; object-fit:contain;"></span>
+    </div>
+  </div>
+
+  <div class="logo"><img src="logo.png" alt="ZORQ" style="width:100%; height:100%; object-fit:contain;"></div>
+  <div class="tagline">Zero Overhead Response Query</div>
+
+  <div class="progress-wrap">
+    <div class="progress-label">
+      <span>INITIALIZING</span>
+      <span id="pct">0%</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="fill"></div>
+    </div>
+  </div>
+
+  <div class="status" id="status">Booting core modules...</div>
+  <div class="dots">
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+  </div>
+</div>
+
+<script>
+  const messages = [
+    "Booting core modules...",
+    "Loading language engine...",
+    "Calibrating neural links...",
+    "Establishing secure session...",
+    "Ready. Launching dashboard..."
+  ];
+  const pct = document.getElementById('pct');
+  const status = document.getElementById('status');
+  const timings = [0, 800, 1600, 2400, 3400];
+  const percents = [0, 40, 65, 85, 100];
+  const queryParams = new URLSearchParams(window.location.search);
+  const nextPage = queryParams.get('next') || 'auth';
+
+  timings.forEach((t, i) => {
+    setTimeout(() => {
+      status.textContent = messages[i];
+      pct.textContent = percents[i] + '%';
+      if (i === timings.length - 1) {
+        setTimeout(() => {
+          window.location.href = nextPage + '.html';
+        }, 400);
+      }
+    }, t + 1200);
+  });
+</script>
+</body>
+</html>

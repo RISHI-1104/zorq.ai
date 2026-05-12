@@ -1,0 +1,309 @@
+🚀 ZORQ AI - Groq API Setup Guide
+=====================================
+
+Everything you need to know about setting up your Groq API key for ZORQ AI.
+
+📋 TABLE OF CONTENTS
+====================
+1. What is Groq API?
+2. Getting Your API Key
+3. Installing in ZORQ
+4. Verifying Setup
+5. Troubleshooting
+6. Switching Models
+7. Security Best Practices
+
+---
+
+1️⃣ WHAT IS GROQ API?
+====================
+
+Groq provides fast AI inference with multiple language models:
+- Lightning-fast response times (~500ms)
+- Free tier with generous limits
+- Multiple model options (Llama, Mixtral, etc.)
+- Easy integration
+
+Official Website: https://groq.com
+Console: https://console.groq.com
+
+---
+
+2️⃣ GETTING YOUR API KEY
+=========================
+
+Step 1: Create Account
+   1. Go to: https://console.groq.com
+   2. Sign up (or log in if you have an account)
+   3. Verify email
+
+Step 2: Create API Key
+   1. In console, click "API Keys" in left sidebar
+   2. Click "Create New API Key"
+   3. Give it a name (e.g., "ZORQ AI")
+   4. Copy the key (format: gsk_...)
+   5. ✓ Save it somewhere safe!
+
+⚠️  IMPORTANT: 
+   - This key is SECRET - never share it
+   - Never commit it to GitHub
+   - Treat it like a password
+   - Regenerate if compromised
+
+---
+
+3️⃣ INSTALLING IN ZORQ
+=======================
+
+METHOD A: Using .env File (RECOMMENDED for Production)
+======================================================
+
+1. Copy .env.example to .env:
+   - Windows: Copy .env.example → Rename to .env
+   - Or: copy .env.example .env (in terminal)
+
+2. Edit .env file:
+   GROQ_API_KEY=gsk_your_key_here
+
+3. Update server.py to load from .env:
+   ✓ Already supported if you use the setup.bat!
+
+4. Restart server and test
+
+METHOD B: Direct in Code (Quick Testing Only)
+==============================================
+
+1. Open: server.py
+2. Find line ~8: GROQ_API_KEY = 'gsk_...'
+3. Replace with your key:
+   GROQ_API_KEY = 'gsk_YOUR_ACTUAL_API_KEY_HERE'
+4. Save file
+5. Restart server: python server.py
+
+⚠️  SECURITY NOTE: This method is NOT recommended for production!
+   Anyone who sees your code can steal your API key.
+
+---
+
+4️⃣ VERIFYING SETUP
+===================
+
+To verify your API key works:
+
+Step 1: Start the server
+   python server.py
+
+Step 2: Open browser
+   Go to: http://localhost:5000
+
+Step 3: Test a message
+   1. Complete authentication
+   2. Type: "Hello! What's 2 + 2?"
+   3. Send message
+
+Step 4: Check results
+   ✓ If you see response: "The answer is: 4" → Setup is working!
+   ✗ If you see error: Check troubleshooting below
+
+Optional: Check server logs
+   1. Look at terminal where server is running
+   2. You should see:
+      [DEBUG] Received data: {'messages': [...]}
+      [DEBUG] Sending X messages to Groq API
+      [DEBUG] Response: "The answer is: 4"
+
+---
+
+5️⃣ TROUBLESHOOTING
+===================
+
+ERROR: "model does not exist or you do not have access"
+-------------------------------------------------------
+Solution:
+1. Your API key might be invalid
+2. Try a different model (see below)
+3. Verify key at: https://console.groq.com/keys
+4. Regenerate key if needed
+
+ERROR: "Connection error" or "timeout"
+--------------------------------------
+Solution:
+1. Check internet connection
+2. Groq API might be down (rare)
+3. Try again in a few seconds
+4. Check server logs for details
+
+ERROR: "Invalid API key"
+------------------------
+Solution:
+1. Check there are no extra spaces in the key
+2. Key should start with "gsk_"
+3. Copy directly from console.groq.com
+4. Regenerate new key and update
+
+ERROR: 401 Unauthorized
+------------------------
+Solution:
+1. API key is expired or revoked
+2. Generate new key from console
+3. Update GROQ_API_KEY in server.py
+4. Restart server
+
+---
+
+6️⃣ SWITCHING MODELS
+====================
+
+Current Working Model (Tested):
+   llama-3.1-8b-instant ✓ (Fastest, 8B parameters)
+
+To switch models:
+
+Step 1: Check available models
+   https://console.groq.com/docs/models
+
+Step 2: Update server.py
+   Find line ~25:
+   'model': 'llama-3.1-8b-instant',
+   
+   Change to your preferred model:
+   'model': 'mixtral-8x7b',
+
+Step 3: Restart server
+   python server.py
+
+Step 4: Test in browser
+   Send a test message and verify response
+
+Popular Models:
+   - llama-3.1-8b-instant ⚡ (Fastest, default)
+   - mixtral-8x7b (More capable)
+   - llama-3.1-70b (Very capable, slower)
+   - gemma2-9b-it (Good balance)
+
+Check console.groq.com/docs/models for full list and latest models.
+
+---
+
+7️⃣ SECURITY BEST PRACTICES
+============================
+
+Before Pushing to GitHub:
+   ✓ API key should NOT be in any files
+   ✓ Use .env for local development
+   ✓ Add .env to .gitignore (already done)
+   ✓ Check .gitignore includes: .env, *.env
+
+For Production Deployment:
+   ✓ Set environment variables on hosting platform
+   ✓ NEVER hardcode API key in code
+   ✓ Use .env.example as template (no real keys)
+   ✓ Regularly rotate API keys
+   ✓ Monitor API usage
+
+Protecting Your Key:
+   ✓ Treat like a password
+   ✓ Don't share in messages/emails
+   ✓ Regenerate if accidentally exposed
+   ✓ Use limited-scope keys if available
+   ✓ Check console for unusual activity
+
+---
+
+🔗 USEFUL LINKS
+================
+
+Groq Resources:
+   Console: https://console.groq.com
+   API Keys: https://console.groq.com/keys
+   Models: https://console.groq.com/docs/models
+   Documentation: https://console.groq.com/docs
+   Status: https://status.groq.com
+
+ZORQ Resources:
+   GitHub: https://github.com/YOUR_USERNAME/zorq
+   Issues: https://github.com/YOUR_USERNAME/zorq/issues
+   Wiki: https://github.com/YOUR_USERNAME/zorq/wiki
+
+---
+
+💬 SUPPORT
+==========
+
+If you need help:
+   1. Check this guide again
+   2. See README.md troubleshooting section
+   3. Check Groq status: https://status.groq.com
+   4. Open GitHub issue with error message
+   5. Email support with details
+
+Include in bug reports:
+   - Error message (full text)
+   - Server logs (from terminal)
+   - What you were trying to do
+   - Python version (python --version)
+   - OS (Windows/Mac/Linux)
+
+---
+
+Last Updated: 2024
+For latest info: Check README.md and console.groq.com
+   
+   Replace with one of the active models from Groq console
+   Example:
+      model: 'gpt-4-turbo-preview'
+
+Step 5: Restart server
+   1. Stop the server (Press Ctrl+C in terminal)
+   2. Run again: python server.py
+   3. Test in browser
+
+
+🔍 TO CHECK IF IT'S WORKING:
+=============================
+1. Open: http://localhost:5000/dashboard.html
+2. Type a test message
+3. If it works → you'll see AI response
+4. If it fails → check terminal for error message
+
+
+📝 RECOMMENDED MODELS TO TRY (in order):
+========================================
+1. gpt-4-turbo-preview
+2. claude-3-5-sonnet
+3. llama-3.1-405b
+4. gemma2-9b-it
+5. mixtral-8x7b-32768
+
+
+🎯 FOR ADVANCED USERS:
+======================
+You can also set environment variable instead of hardcoding:
+
+Windows PowerShell:
+   $env:GROQ_API_KEY = "your_key_here"
+   python server.py
+
+Then update server.py to read from environment:
+   GROQ_API_KEY = os.environ.get('GROQ_API_KEY', 'fallback_key')
+
+
+❓ STILL NOT WORKING?
+====================
+1. Check your API key is correct (no spaces, exact copy)
+2. Verify model name is spelled correctly (case-sensitive)
+3. Check internet connection
+4. Try a different model from the active list
+5. Create a new API key from console.groq.com
+6. Check Groq status page: status.groq.com
+
+
+✅ ONCE WORKING:
+===============
+- ZORQ will respond instantly
+- You can chat back and forth
+- Save conversations to JSON
+- Deploy to internet
+
+
+Need help? Check the terminal output for error messages!

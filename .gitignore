@@ -1,0 +1,153 @@
+# Environment variables & secrets (CRITICAL)
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
+.env.test
+.env.staging
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments
+venv/
+ENV/
+env/
+.venv
+.venv3
+env.bak/
+venv.bak/
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+.project
+.pydevproject
+.settings/
+
+# Windows specific
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# macOS specific
+.AppleDouble
+.LSOverride
+
+# Flask specific
+instance/
+.webassets-cache
+flask_session/
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs & Temporary files
+*.log
+logs/
+*.tmp
+*.bak
+.temp/
+temp/
+
+# Testing
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Credentials & Secrets (failsafe)
+**/secrets.yml
+**/config/keys/
+**/*.key
+**/*.pem
+**/*_secret*
+**/*_private*
+
+# Node modules (if using any build tools)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Static & Media
+static/
+media/
+
+# Pickle files
+*.pkl
+*.pickle
+
+# Cache files
+.cache
+*.cache
+
+# IDE cache
+.pytest_cache/
+.mypy_cache/
+
+
+# OS Files
+.DS_Store
+Thumbs.db
+Desktop.ini
+ehthumbs.db
+$RECYCLE.BIN/
+
+# Logs
+*.log
+logs/
+*.out
+debug.log
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Node (Legacy)
+node_modules/
+package-lock.json
+npm-debug.log
+
+# Temporary
+*.tmp
+*.temp
+tmp/
+*.bak
+*.backup
+
+# Credentials
+*.pem
+*.key
+.ssh/
+credentials.json
+secrets.json
